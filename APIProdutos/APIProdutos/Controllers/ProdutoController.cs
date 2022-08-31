@@ -8,13 +8,13 @@ namespace APIProdutos.Controllers
     public class ProdutoController : ControllerBase
     {
         public List<Produto> ProdutoList { get; set; }
-        
-        private readonly IConfiguration _configuration;
+
+        public ProdutoRepository _repositoryProduto;
 
         public ProdutoController(IConfiguration configuration)
         {
             ProdutoList = new List<Produto>();
-            _configuration = configuration;
+            _repositoryProduto = new ProdutoRepository(configuration);
         }
 
         [HttpGet("/produto/{descricao}")]
@@ -35,17 +35,19 @@ namespace APIProdutos.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         public ActionResult<List<Produto>> GetProdutos()
         {
-            var repositoryProduto = new ProdutoRepository(_configuration);
-            var produtos = repositoryProduto.GetProdutos();
-            return Ok(produtos);
+            return Ok(_repositoryProduto.GetProdutos());
         }
 
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public ActionResult<List<Produto>> PostProduto(Produto produto)
+        public ActionResult<Produto> PostProduto(Produto produto)
         {
-            ProdutoList.Add(produto);
+            if (!_repositoryProduto.InsertProduto(produto))
+            {
+                return BadRequest();
+            }
+
             return CreatedAtAction(nameof(PostProduto), produto);
         }
 
@@ -68,8 +70,7 @@ namespace APIProdutos.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public ActionResult<List<Produto>> DeleteProduto(long id)
         {
-            var produtos = ProdutoList;
-            if (produtos == null)
+            if (!_repositoryProduto.DeleteProduto(id))
             {
                 return NotFound();
             }
