@@ -1,3 +1,4 @@
+using APIProdutos.Repository;
 using Microsoft.AspNetCore.Mvc;
 
 namespace APIProdutos.Controllers
@@ -7,9 +8,13 @@ namespace APIProdutos.Controllers
     public class ProdutoController : ControllerBase
     {
         public List<Produto> ProdutoList { get; set; }
-        public ProdutoController()
+        
+        private readonly IConfiguration _configuration;
+
+        public ProdutoController(IConfiguration configuration)
         {
             ProdutoList = new List<Produto>();
+            _configuration = configuration;
         }
 
         [HttpGet("/produto/{descricao}")]
@@ -30,7 +35,9 @@ namespace APIProdutos.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         public ActionResult<List<Produto>> GetProdutos()
         {
-            return Ok(ProdutoList);
+            var repositoryProduto = new ProdutoRepository(_configuration);
+            var produtos = repositoryProduto.GetProdutos();
+            return Ok(produtos);
         }
 
         [HttpPost]
