@@ -79,6 +79,7 @@ namespace ProgWebIII.Controllers
         [HttpDelete("/tempo/{index}/deletar")]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesErrorResponseType(typeof(WeatherForecast))]
         public IActionResult Deletar(int index)
         {
             if (index >= tempos.Count || index < 0)
