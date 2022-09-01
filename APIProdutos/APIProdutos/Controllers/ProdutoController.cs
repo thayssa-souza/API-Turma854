@@ -28,6 +28,8 @@ namespace APIProdutos.Controllers
             {
                 return NotFound();
             }
+
+            _repositoryProduto.SelectProdutos(descricao);
             return Ok(produtos);
         }
 
@@ -61,6 +63,7 @@ namespace APIProdutos.Controllers
             if (produtos == null)
                 return NotFound();
 
+            _repositoryProduto.UpdateProduto(id, produto);
             return NoContent();
         }
 
