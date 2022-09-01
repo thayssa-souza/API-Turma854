@@ -63,15 +63,15 @@ namespace APIProdutos.Repository
             return conn.Execute(query, parameters) == 1;
         }
 
-        public List<Produto> SelectProdutos(string descricao)
+        public Produto SelectProdutos(string descricao)
         {
-            var query = "SELECT * FROM Produtos";
+            var query = "SELECT * FROM Produtos WHERE descricao = @descricao";
             var parameters = new DynamicParameters();
             parameters.Add("descricao", descricao);
 
             using var conn = new SqlConnection(_configuration.GetConnectionString("DefaultConnection"));
 
-            return conn.Query<Produto>(query).ToList();
+            return conn.QueryFirstOrDefault<Produto>(query, parameters);
         }
     }
 }
